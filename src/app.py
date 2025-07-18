@@ -60,6 +60,26 @@ def get_character(character_id):
 
     return jsonify(character.serialize()), 200
 
+@app.route('/favorite/character/<int:character_id>', methods=['POST'])
+def add_favorite_character(character_id):
+    user_id = 1
+    favorite = FavoriteCharacter(user_id=user_id, character_id=character_id)
+    db.session.add(favorite)
+    db.session.commit()
+
+    return jsonify(favorite.serialize()), 200
+
+@app.route('/favorite/character/<int:character_id>', methods=['DELETE'])
+def delete_favorite_character(character_id):
+    user_id = 1
+
+    favorite_character = db.session.query(FavoriteCharacter).filter_by(user_id=user_id, character_id=character_id).first()
+
+    db.session.delete(favorite_character)
+    db.session.commit()
+
+    return jsonify({"message": "Favorite character deleted"}), 200
+
 @app.route('/planets', methods=['GET'])
 def get_planets():
 
@@ -88,12 +108,12 @@ def add_favorite_planet(planet_id):
 def delete_favorite_planet(planet_id):
     user_id = 1
 
-    favorite = db.session.query(FavoritePlanet).filter_by(user_id=user_id, planet_id=planet_id).first()
+    favorite_panet = db.session.query(FavoritePlanet).filter_by(user_id=user_id, planet_id=planet_id).first()
 
-    db.session.delete(favorite)
+    db.session.delete(favorite_panet)
     db.session.commit()
 
-    return jsonify({"message": "Favorite deleted"}), 200
+    return jsonify({"message": "Favorite planet deleted"}), 200
 
 @app.route('/user2', methods=['GET'])
 def get_users2():
