@@ -6,8 +6,12 @@ db = SQLAlchemy()
 
 class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
-    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    nickname: Mapped[str] = mapped_column(nullable=False)
     password: Mapped[str] = mapped_column(nullable=False)
+    email: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    nombre: Mapped[str] = mapped_column(nullable=False)
+    apellido: Mapped[str] = mapped_column(nullable=False)
+    fecha_de_subscripcion: Mapped[str] = mapped_column(nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean(), nullable=False)
 
 
@@ -15,6 +19,10 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
+            "nickname": self.nickname,
+            "nombre": self.nombre,
+            "apellido": self.apellido,
+            "fecha_de_subscripcion": self.fecha_de_subscripcion,
             # do not serialize the password, its a security breach
         }
     
