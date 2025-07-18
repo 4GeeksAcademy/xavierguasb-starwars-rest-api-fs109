@@ -43,14 +43,26 @@ class Planet(db.Model):
             "terreno": self.terreno,
             "poblacion": self.poblacion,
         }
+    
+class FavoritePlanet(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(nullable=False)
+    planet_id: Mapped[int] = mapped_column(nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "planet_id": self.planet_id,
+        }
 
 class Character(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     nombre: Mapped[str] = mapped_column(nullable=False)
     genero: Mapped[str] = mapped_column(nullable=False)
-    color_de_pelo: Mapped[int] = mapped_column(nullable=False)
-    altura: Mapped[str] = mapped_column(nullable=False)
-    color_de_ojos: Mapped[int] = mapped_column(nullable=False)
+    color_de_pelo: Mapped[str] = mapped_column(nullable=False)
+    altura: Mapped[int] = mapped_column(nullable=False)
+    color_de_ojos: Mapped[str] = mapped_column(nullable=False)
 
     def serialize(self):
         return {
@@ -60,4 +72,16 @@ class Character(db.Model):
             "color_de_pelo": self.color_de_pelo,
             "altura": self.altura,
             "color_de_ojos": self.color_de_ojos,
+        }
+
+class FavoriteCharacter(db.Model):
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(nullable=False)
+    character_id: Mapped[int] = mapped_column(nullable=False)
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_id": self.user_id,
+            "haracter_id": self.haracter_id,
         }

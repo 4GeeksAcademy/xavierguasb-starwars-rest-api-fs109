@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, Character, Planet
+from models import db, User, Character, Planet, FavoritePlanet, FavoriteCharacter
 from sqlalchemy import select
 #from models import Person
 
@@ -40,7 +40,7 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def get_users():
 
-    all_users =db.session.execute(select(User)).scalars().all()
+    all_users = db.session.execute(select(User)).scalars().all()
     results = list(map(lambda user: user.serialize(), all_users))
 
     return jsonify(results), 200
@@ -48,10 +48,17 @@ def get_users():
 @app.route('/people', methods=['GET'])
 def get_characters():
 
-    all_characters =db.session.execute(select(Character)).scalars().all()
+    all_characters = db.session.execute(select(Character)).scalars().all()
     results = list(map(lambda character: character.serialize(), all_characters))
 
     return jsonify(results), 200
+
+@app.route('/people/<int:character_id>', methods=['GET'])
+def get_character(character_id):
+
+    character = db.session.get(Character, character_id)
+
+    return jsonify(character.serialize()), 200
 
 @app.route('/planets', methods=['GET'])
 def get_planets():
@@ -60,6 +67,33 @@ def get_planets():
     results = list(map(lambda planet: planet.serialize(), all_planets))
 
     return jsonify(results), 200
+
+@app.route('/planets/<int:planet_id>', methods=['GET'])
+def get_planet(planet_id):
+
+    planet = db.session.get(Planet, planet_id)
+
+    return jsonify(planet.serialize()), 200
+
+@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
+def add_favorite_planet(planet_id):
+    user_id = 1
+    favorite = FavoritePlanet(user_id=user_id, planet_id=planet_id)
+    db.session.add(favorite)
+    db.session.commit()
+
+    return jsonify(favorite.serialize()), 200
+
+@app.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
+def delete_favorite_planet(planet_id):
+    user_id = 1
+
+    favorite = db.session.query(FavoritePlanet).filter_by(user_id=user_id, planet_id=planet_id).first()
+
+    db.session.delete(favorite)
+    db.session.commit()
+
+    return jsonify({"message": "Favorite deleted"}), 200
 
 @app.route('/user2', methods=['GET'])
 def get_users2():
