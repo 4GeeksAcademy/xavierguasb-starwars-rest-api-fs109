@@ -83,7 +83,7 @@ def delete_favorite_character(character_id):
 @app.route('/planets', methods=['GET'])
 def get_planets():
 
-    all_planets =db.session.execute(select(Planet)).scalars().all()
+    all_planets = db.session.execute(select(Planet)).scalars().all()
     results = list(map(lambda planet: planet.serialize(), all_planets))
 
     return jsonify(results), 200
@@ -115,15 +115,25 @@ def delete_favorite_planet(planet_id):
 
     return jsonify({"message": "Favorite planet deleted"}), 200
 
-@app.route('/user2', methods=['GET'])
-def get_users2():
+@app.route('/users/favorites', methods=['GET'])
+def get_users_favorites():
+    all_users = db.session.execute(select(User)).scalars().all()
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+    results = []
 
-    return jsonify(response_body), 200
+    for user in all_users:
+        user_data = {
+            "user_id": user.id,
+            "email": user.email,
+            "nickname": user.nickname,
+            "favorites": {
+                "planets": [fav.planet.serialize() for fav in user.favorite_planet],
+                "characters": [fav.character.serialize() for fav in user.favorite_characters],
+            }
+        }
+        results.append(user_data)
 
+    return jsonify(results), 200
 
 
 # this only runs if `$ python src/app.py` is executed
